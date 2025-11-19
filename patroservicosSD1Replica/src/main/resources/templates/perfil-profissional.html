@@ -1,0 +1,265 @@
+<!-- <!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <!-- Bootstrap CSS 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+<div th:fragment="conteudo">
+  <div class="container-fluid py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-9">
+        
+        <!-- Header do Perfil 
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-body p-4">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center shadow"
+                     style="width: 100px; height: 100px; font-size: 2.5rem; font-weight: 600;" 
+                     id="iniciaisPerfil">P</div>
+              </div>
+              <div class="col">
+                <h1 id="nomeProfissional" class="h3 mb-2 text-dark">Profissional</h1>
+                <div id="profissaoLocal" class="text-muted mb-2">
+                  <i class="bi bi-briefcase me-1"></i><span id="profissaoText">Profissão</span>
+                  <i class="bi bi-geo-alt me-1 ms-3"></i><span id="localizacaoText">Cidade, Estado</span>
+                </div>
+                <div id="badgeVerificado" class="mt-2">
+                  <!-- Badge será inserido via JavaScript 
+                </div>
+              </div>
+              <div class="col-auto">
+                <button class="btn btn-success btn-lg px-4" id="btnConversar" onclick="iniciarChat()">
+                  <i class="bi bi-chat-dots me-2"></i>Conversar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- Coluna Principal
+          <div class="col-lg-8">
+            <!-- Sobre 
+            <section class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-light border-0 py-3">
+                <h5 class="mb-0">
+                  <i class="bi bi-person-circle me-2 text-primary"></i>Sobre
+                </h5>
+              </div>
+              <div class="card-body">
+                <p id="descricaoProfissional" class="mb-0 text-secondary lh-base">
+                  <i class="bi bi-info-circle me-1 text-muted"></i>
+                  <span id="descricaoText">Carregando descrição...</span>
+                </p>
+              </div>
+            </section>
+
+            <!-- Portfólio 
+            <section class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-light border-0 py-3">
+                <h5 class="mb-0">
+                  <i class="bi bi-images me-2 text-success"></i>Portfólio
+                </h5>
+              </div>
+              <div class="card-body">
+                <div id="galeriaFotos" class="row g-3">
+                  <!-- Fotos serão inseridas via JavaScript 
+                </div>
+                <div id="semFotos" class="text-center py-4 d-none">
+                  <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                  <p class="text-muted mt-2 mb-0">Nenhuma foto disponível no portfólio</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Certificados 
+            <section class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-light border-0 py-3">
+                <h5 class="mb-0">
+                  <i class="bi bi-award me-2 text-warning"></i>Certificados e Qualificações
+                </h5>
+              </div>
+              <div class="card-body p-0">
+                <div id="listaCertificados" class="list-group list-group-flush">
+                  <!-- Certificados serão inseridos via JavaScript 
+                </div>
+                <div id="semCertificados" class="text-center py-4 d-none">
+                  <i class="bi bi-file-earmark-text text-muted" style="font-size: 3rem;"></i>
+                  <p class="text-muted mt-2 mb-0">Nenhum certificado informado</p>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Sidebar 
+          <div class="col-lg-4">
+            <!-- Contato 
+            <section class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-light border-0 py-3">
+                <h5 class="mb-0">
+                  <i class="bi bi-telephone me-2 text-info"></i>Contato
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="d-flex flex-column gap-3">
+                  <div class="d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                      <i class="bi bi-envelope text-primary"></i>
+                    </div>
+                    <div>
+                      <div class="small text-muted">Email</div>
+                      <div id="emailProfissional" class="fw-semibold">carregando...</div>
+                    </div>
+                  </div>
+                  
+                  <div class="d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                      <i class="bi bi-phone text-success"></i>
+                    </div>
+                    <div>
+                      <div class="small text-muted">Telefone</div>
+                      <div id="numeroProfissional" class="fw-semibold">carregando...</div>
+                    </div>
+                  </div>
+                  
+                  <div class="d-flex align-items-center">
+                    <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+                      <i class="bi bi-geo-alt text-warning"></i>
+                    </div>
+                    <div>
+                      <div class="small text-muted">Localização</div>
+                      <div id="cidadeEstadoProfissional" class="fw-semibold">carregando...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Status Documento 
+            <section class="card shadow-sm border-0 mb-4">
+              <div class="card-header bg-light border-0 py-3">
+                <h5 class="mb-0">
+                  <i class="bi bi-shield-check me-2 text-success"></i>Verificação
+                </h5>
+              </div>
+              <div class="card-body">
+                <div id="statusDocumento" class="text-center">
+                  <div class="spinner-border text-primary spinner-border-sm me-2" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                  </div>
+                  <span class="text-muted">Verificando status...</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- Ações Rápidas
+            <section class="card shadow-sm border-0">
+              <div class="card-header bg-light border-0 py-3">
+                <h5 class="mb-0">
+                  <i class="bi bi-lightning me-2 text-purple"></i>Ações Rápidas
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="d-grid gap-2">
+                  <button class="btn btn-outline-primary btn-sm" onclick="compartilharPerfil()">
+                    <i class="bi bi-share me-1"></i>Compartilhar Perfil
+                  </button>
+                  <button class="btn btn-outline-secondary btn-sm" onclick="favoritarProfissional()">
+                    <i class="bi bi-star me-1"></i>Adicionar aos Favoritos
+                  </button>
+                  <button class="btn btn-outline-info btn-sm" onclick="solicitarOrcamento()">
+                    <i class="bi bi-currency-dollar me-1"></i>Solicitar Orçamento
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Mensagem de Erro 
+        <div id="erroPublico" class="alert alert-danger d-none mt-4" role="alert">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          <span id="erroTexto"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:fragment="scripts">
+  <!-- Bootstrap JS
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/perfil-publico.js"></script>
+  
+  <script>
+    // Funções auxiliares para as ações
+    function compartilharPerfil() {
+      if (navigator.share) {
+        navigator.share({
+          title: document.getElementById('nomeProfissional').textContent,
+          text: 'Confira o perfil deste profissional:',
+          url: window.location.href
+        });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert('Link do perfil copiado para a área de transferência!');
+      }
+    }
+
+    function favoritarProfissional() {
+      // Implementar favoritação
+      alert('Profissional adicionado aos favoritos!');
+    }
+
+    function solicitarOrcamento() {
+      // Implementar solicitação de orçamento
+      alert('Redirecionando para solicitação de orçamento...');
+    }
+
+    // Exemplo de como atualizar o status de verificação
+    function atualizarStatusVerificado(verificado) {
+      const statusElement = document.getElementById('statusDocumento');
+      const badgeElement = document.getElementById('badgeVerificado');
+      
+      if (verificado) {
+        statusElement.innerHTML = `
+          <div class="text-success">
+            <i class="bi bi-shield-check fs-4"></i>
+            <div class="fw-semibold mt-1">Verificado</div>
+            <small class="text-muted">Documentos confirmados</small>
+          </div>
+        `;
+        badgeElement.innerHTML = `
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i>Profissional Verificado
+          </span>
+        `;
+      } else {
+        statusElement.innerHTML = `
+          <div class="text-warning">
+            <i class="bi bi-shield-exclamation fs-4"></i>
+            <div class="fw-semibold mt-1">Em Análise</div>
+            <small class="text-muted">Documentos sendo verificados</small>
+          </div>
+        `;
+        badgeElement.innerHTML = `
+          <span class="badge bg-warning text-dark">
+            <i class="bi bi-clock me-1"></i>Verificação Pendente
+          </span>
+        `;
+      }
+    }
+
+    // Simulação de carregamento
+    document.addEventListener('DOMContentLoaded', function() {
+      // Aqui você chamaria a função para carregar os dados do perfil
+      // carregarPerfilPublico();
+    });
+  </script>
+</div>
+</body>
+</html> -->

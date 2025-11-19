@@ -1,0 +1,156 @@
+<!-- <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meu Perfil Profissional</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
+</head>
+<body>
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="h4 mb-0">Editar Meu Perfil</h2>
+      <a class="btn btn-outline-secondary" href="/"><i class="bi bi-house"></i> Home</a>
+    </div>
+
+    <form id="formEditarPerfil" class="mb-4">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Nome</label>
+          <input id="nome" class="form-control" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Telefone</label>
+          <input id="numero" class="form-control" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Email</label>
+          <input id="email" type="email" class="form-control" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Profissão</label>
+          <input id="profissao" class="form-control" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Cidade</label>
+          <input id="cidade" class="form-control" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Estado</label>
+          <input id="estado" class="form-control" />
+        </div>
+        <div class="col-12">
+          <label class="form-label">Descrição</label>
+          <textarea id="descricao" class="form-control" rows="3"></textarea>
+        </div>
+        <!-- Campos de documentos removidos (CPF, RG e fotos) pois não precisam ser reeditados aqui 
+        <div class="col-12">
+          <label class="form-label">Portfólio (múltiplas fotos)</label>
+          <input type="file" id="portfolio" class="form-control" multiple accept="image/*" />
+          <div class="mt-2" id="fotosAtuais"></div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Certificados (separados por vírgula)</label>
+          <textarea id="certificados" class="form-control" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="mt-4 d-flex gap-2">
+        <button type="button" class="btn btn-primary" onclick="salvarPerfil()"><i class="bi bi-save"></i> Salvar Alterações</button>
+        <button type="button" class="btn btn-outline-secondary" onclick="carregarPerfil()"><i class="bi bi-arrow-clockwise"></i> Recarregar</button>
+      </div>
+      <div class="mt-3">
+        <div id="msgOk" class="alert alert-success d-none"></div>
+        <div id="msgErro" class="alert alert-danger d-none"></div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+  const SD1_BASE = 'http://localhost:8082';
+  function profissionalId(){return sessionStorage.getItem('usuarioProfissionalId');}
+
+    async function carregarPerfil(){
+      const id=profissionalId();
+      if(!id){msgErro('Sem profissional logado.');return;}
+      try{
+        const r=await fetch(`/api/profissionais/${id}/perfil`);
+        if(!r.ok) throw new Error('Falha ao carregar perfil');
+        const p=await r.json();
+        // preencher campos
+        nome.value=p.nome||'';numero.value=p.numero||'';email.value=p.email||'';profissao.value=p.profissao||'';descricao.value=p.descricao||'';cidade.value=p.cidade||'';estado.value=p.estado||'';certificados.value=p.certificados||'';
+  fotosAtuais.innerHTML='';
+  const fotosCarregadas = (p.perfil && p.perfil.fotos) ? p.perfil.fotos : p.fotos;
+  if(fotosCarregadas){fotosCarregadas.split(',').filter(f=>f).forEach(f=>{const img=document.createElement('img');img.src=f;img.className='me-2 mb-2 border';img.style.height='80px';fotosAtuais.appendChild(img);});}
+        msgOk('Perfil carregado.');
+      }catch(e){console.error(e);msgErro('Erro ao carregar perfil.');}
+    }
+
+    async function uploadUnico(file,prefixo){
+      const fd=new FormData();
+      fd.append('file',file);
+      const r=await fetch('/api/uploads?prefixo='+encodeURIComponent(prefixo),{method:'POST',body:fd});
+      if(!r.ok) throw new Error('Upload falhou');
+      const j=await r.json();
+      // normaliza urls que eventualmente retornem prefixos repetidos 'port,port' -> mantem como vindo, front agora treat
+      return j.url;
+    }
+
+    async function salvarPerfil(){
+      const id=profissionalId(); if(!id){msgErro('Sem profissional logado.');return;}
+      msgOk(''); msgErro('');
+      // uploads condicionais
+      let novasFotosPort=[]; // somente novas fotos de portfólio
+      try{
+        for(const f of portfolio.files){const up=await uploadUnico(f,'port');novasFotosPort.push(up);}  
+      }catch(e){console.error(e);msgErro('Falha em upload de arquivos.');return;}
+
+      // combina fotos antigas + novas
+      let todasFotos=[];
+      const idProf=profissionalId();
+      try {
+        const rAntigo=await fetch(`/api/profissionais/${idProf}/perfil`);
+        if(rAntigo.ok){
+          const pAnt=await rAntigo.json();
+          const fotosAntigas = (pAnt.perfil && pAnt.perfil.fotos) ? pAnt.perfil.fotos : pAnt.fotos;
+          if(fotosAntigas) todasFotos=todasFotos.concat(fotosAntigas.split(',').map(s=>s.trim()).filter(x=>x));
+        }
+      } catch(_){}
+      todasFotos=todasFotos.concat(novasFotosPort);
+
+      const body={
+        nome:nome.value,
+        numero:numero.value,
+        email:email.value,
+        profissao:profissao.value,
+        descricao:descricao.value,
+        cidade:cidade.value,
+        estado:estado.value,
+        certificados:certificados.value
+      };
+      // Só envia campo 'fotos' se houver adição de novas (evita sobrescrever quando não muda)
+      if(novasFotosPort.length>0){
+        body.fotos = todasFotos.join(',');
+        // sanity: remove URLs que não começam com http (descartando fragmentos soltos)
+        body.fotos = body.fotos.split(',').filter(f=>/^https?:\/\//i.test(f.trim())).join(',');
+      }
+
+      try{
+        const r=await fetch(`/api/profissionais/${id}/perfil`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        if(!r.ok) throw new Error(await r.text());
+        msgOk('Perfil salvo com sucesso.');carregarPerfil();
+      }catch(e){console.error(e);msgErro('Erro ao salvar perfil: '+e.message);}
+    }
+
+    function msgOk(t){if(!t){msgOkDiv.classList.add('d-none');return;}msgOkDiv.textContent=t;msgOkDiv.className='alert alert-success';msgOkDiv.id='msgOk';msgOkDiv.classList.remove('d-none');}
+    function msgErro(t){if(!t){msgErroDiv.classList.add('d-none');return;}msgErroDiv.textContent=t;msgErroDiv.className='alert alert-danger';msgErroDiv.id='msgErro';msgErroDiv.classList.remove('d-none');}
+
+    const msgOkDiv=document.getElementById('msgOk');
+    const msgErroDiv=document.getElementById('msgErro');
+
+    document.addEventListener('DOMContentLoaded',carregarPerfil);
+  </script>
+</body>
+</html> -->
+
+<p>profissional meu perfil</p>

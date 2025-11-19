@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"path": "patroservicosSD1"
+		},
+		{
+			"path": "patroservicosSD2"
+		},
+		{
+			"path": "patroservicosSDGestor"
+		},
+		{
+			"path": "patroservicosSDCliente"
+		},
+		{
+			"path": "patroservicosSD3"
+		},
+		{
+			"path": "patroservicosSD1Replica"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic",
+		"liveServer.settings.multiRootWorkspaceName": "patroservicosSDCliente",
+		"java.configuration.updateBuildConfiguration": "interactive"
+	}
+}

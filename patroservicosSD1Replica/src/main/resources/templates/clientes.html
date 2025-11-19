@@ -1,0 +1,55 @@
+<!-- <!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="layout :: *">
+<body>
+<div th:fragment="conteudo">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Clientes</h2>
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCliente" onclick="novoCliente()">Novo</button>
+  </div>
+  <div class="mb-3">
+    <input id="filtroNome" class="form-control" placeholder="Pesquisar por nome...">
+  </div>
+  <table class="table table-striped align-middle">
+    <thead>
+    <tr><th>Nome</th><th>Email</th><th>Número</th><th>Cadastro</th><th></th></tr>
+    </thead>
+    <tbody id="tbodyClientes"></tbody>
+  </table>
+</div>
+
+<div class="modal fade" id="modalCliente" tabindex="-1">
+  <div class="modal-dialog">
+    <form class="modal-content" onsubmit="salvarCliente(event)">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tituloModalCliente">Novo Cliente</h5>
+        <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="clienteId">
+        <div class="mb-3">
+          <label class="form-label">Nome</label>
+            <input id="clienteNome" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+            <input id="clienteEmail" class="form-control" type="email">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Número</label>
+            <input id="clienteNumero" class="form-control">
+        </div>
+        <div id="erroCliente" class="text-danger small"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Fechar</button>
+        <button class="btn btn-primary" type="submit">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div th:fragment="scripts">
+  <script src="/js/clientes.js"></script>
+</div>
+</body>
+</html> -->

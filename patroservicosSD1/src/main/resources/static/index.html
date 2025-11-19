@@ -1,0 +1,520 @@
+<!-- <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patro Serviços - Encontre Profissionais de Confiança</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    .hero-section {
+      background: var(--primary-gradient);
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
+      background-size: cover;
+    }
+    
+    .feature-card {
+      transition: all 0.3s ease;
+      border: none;
+      border-radius: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--primary-gradient);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    
+    .btn-glow {
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-glow:hover {
+      box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+      transform: translateY(-3px);
+    }
+    
+    .professional-card {
+      transition: all 0.3s ease;
+      border: none;
+      border-radius: 12px;
+    }
+    
+    .professional-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .avatar-placeholder {
+      background: var(--primary-gradient);
+      color: white;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .stats-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem 1rem;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    
+    .stats-card:hover {
+      transform: scale(1.05);
+    }
+    
+    .search-section {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 20px;
+    }
+    
+    .filter-section {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    
+    .loading-spinner {
+      width: 3rem;
+      height: 3rem;
+      border-width: 0.3em;
+    }
+    
+    .section-title {
+      position: relative;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: var(--primary-gradient);
+      border-radius: 2px;
+    }
+    
+    .center-title::after {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <!-- Header com Login 
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="#">
+        <i class="bi bi-building-gear me-2"></i>Patro Serviços
+      </a>
+      <div class="navbar-nav ms-auto">
+        <a href="/login" class="btn btn-outline-primary">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Login
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section 
+  <div class="container py-5">
+    <div class="hero-section text-white p-5 mb-5 position-relative">
+      <div class="row align-items-center position-relative">
+        <div class="col-lg-8">
+          <h1 class="display-4 fw-bold mb-3">
+            <i class="bi bi-building-gear me-3"></i>Patro Serviços
+          </h1>
+          <p class="lead mb-4 opacity-90 fs-5">
+            Conectamos você aos melhores profissionais da sua região. 
+            Encontre especialistas verificados com segurança e agilidade.
+          </p>
+          <div class="d-flex flex-wrap gap-3">
+            <a class="btn btn-light btn-lg px-4 py-3 fw-semibold btn-glow" href="/profissional/cadastro">
+              <i class="bi bi-person-plus me-2"></i>Quero ser Profissional
+            </a>
+            <button class="btn btn-outline-light btn-lg px-4 py-3" onclick="scrollToProfissionais()">
+              <i class="bi bi-people me-2"></i>Ver Profissionais
+            </button>
+          </div>
+        </div>
+        <div class="col-lg-4 text-center">
+          <div class="bg-white bg-opacity-20 rounded-circle p-5 d-inline-block">
+            <i class="bi bi-tools" style="font-size: 4rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Section 
+    <div class="row g-4 mb-5">
+      <div class="col-md-3">
+        <div class="stats-card">
+          <h3 class="text-primary fw-bold display-6">500+</h3>
+          <p class="text-muted mb-0">Profissionais</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card">
+          <h3 class="text-success fw-bold display-6">1.2K+</h3>
+          <p class="text-muted mb-0">Serviços Realizados</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card">
+          <h3 class="text-warning fw-bold display-6">4.8</h3>
+          <p class="text-muted mb-0">Avaliação Média</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stats-card">
+          <h3 class="text-info fw-bold display-6">98%</h3>
+          <p class="text-muted mb-0">Satisfação</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section 
+    <div class="row g-4 mb-5">
+      <div class="col-12">
+        <h2 class="section-title center-title text-center">Por que escolher o Patro?</h2>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card card h-100 bg-white p-4">
+          <div class="text-center mb-3">
+            <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-block">
+              <i class="bi bi-shield-check text-primary" style="font-size: 2rem;"></i>
+            </div>
+          </div>
+          <h5 class="fw-bold text-center">Verificados e Seguros</h5>
+          <p class="text-muted text-center">Todos os profissionais passam por rigoroso processo de verificação de documentos e qualificações.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card card h-100 bg-white p-4">
+          <div class="text-center mb-3">
+            <div class="bg-success bg-opacity-10 rounded-circle p-3 d-inline-block">
+              <i class="bi bi-star text-success" style="font-size: 2rem;"></i>
+            </div>
+          </div>
+          <h5 class="fw-bold text-center">Avaliações Transparentes</h5>
+          <p class="text-muted text-center">Confira avaliações reais de outros clientes antes de tomar sua decisão.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card card h-100 bg-white p-4">
+          <div class="text-center mb-3">
+            <div class="bg-warning bg-opacity-10 rounded-circle p-3 d-inline-block">
+              <i class="bi bi-lightning-charge text-warning" style="font-size: 2rem;"></i>
+            </div>
+          </div>
+          <h5 class="fw-bold text-center">Rápido e Prático</h5>
+          <p class="text-muted text-center">Encontre e contrate profissionais qualificados em poucos cliques.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Section 
+    <div class="row justify-content-center mb-5" id="searchSection">
+      <div class="col-lg-10">
+        <div class="search-section p-5">
+          <div class="text-center mb-4">
+            <h3 class="section-title center-title">
+              <i class="bi bi-search-heart text-primary me-2"></i>Buscar Profissional
+            </h3>
+            <p class="text-muted mb-4 fs-6">
+              Digite o ID do profissional para visualizar o perfil completo, portfólio e avaliações.
+            </p>
+          </div>
+          
+          <div class="mb-4">
+            <label for="profId" class="form-label fw-semibold fs-6">
+              <i class="bi bi-person-badge me-1"></i>ID do Profissional
+            </label>
+            <div class="input-group input-group-lg">
+              <input type="text" id="profId" class="form-control py-3 border-0 shadow-sm" 
+                     placeholder="Cole o UUID do profissional (ex: 550e8400-e29b-41d4-a716-446655440000)">
+              <button class="btn btn-primary px-4 fw-semibold" onclick="abrirPerfil()">
+                <i class="bi bi-eye me-2"></i>Ver Perfil
+              </button>
+            </div>
+            <div class="form-text mt-2">
+              <i class="bi bi-info-circle me-1"></i>O ID do profissional é um código único fornecido pelo sistema.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros Profissionais 
+    <div class="filter-section mb-5" id="profissionaisSection">
+      <div class="row align-items-end">
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Profissão</label>
+          <input id="filtroProfissao" class="form-control" placeholder="Ex: Eletricista, Encanador...">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Cidade</label>
+          <input id="filtroCidade" class="form-control" placeholder="Ex: São Paulo, Rio de Janeiro...">
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex gap-2 pt-2">
+            <button class="btn btn-primary flex-fill" onclick="carregarProfissionais()">
+              <i class="bi bi-funnel me-1"></i>Filtrar
+            </button>
+            <button class="btn btn-outline-secondary" onclick="resetFiltros()">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Profissionais Disponíveis</h4>
+            <span class="badge bg-primary fs-6" id="contadorProfissionais">Carregando...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de Profissionais 
+    <div id="listaProfissionais" class="row g-4">
+      <!-- Cards serão inseridos via JavaScript 
+    </div>
+    
+    <div id="semProfissionais" class="text-center py-5 d-none">
+      <div class="bg-light rounded-3 p-5">
+        <i class="bi bi-people display-1 text-muted mb-3"></i>
+        <h4 class="text-muted">Nenhum profissional encontrado</h4>
+        <p class="text-muted mb-4">Tente ajustar os filtros ou buscar por outras categorias.</p>
+        <button class="btn btn-primary" onclick="resetFiltros()">
+          <i class="bi bi-arrow-clockwise me-1"></i>Limpar Filtros
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer
+  <footer class="bg-dark text-white py-5 mt-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h4 class="mb-2">
+            <i class="bi bi-building-gear me-2"></i>Patro Serviços
+          </h4>
+          <p class="text-muted mb-0">Conectando você aos melhores profissionais</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <div class="d-flex gap-3 justify-content-md-end justify-content-start mt-3 mt-md-0">
+            <a href="#" class="text-white-50 text-decoration-none">
+              <i class="bi bi-question-circle me-1"></i>Ajuda
+            </a>
+            <a href="#" class="text-white-50 text-decoration-none">
+              <i class="bi bi-telephone me-1"></i>Contato
+            </a>
+            <a href="#" class="text-white-50 text-decoration-none">
+              <i class="bi bi-shield-check me-1"></i>Privacidade
+            </a>
+          </div>
+        </div>
+      </div>
+      <hr class="my-4 bg-white-50">
+      <div class="text-center text-muted">
+        <small>&copy; 2024 Patro Serviços. Todos os direitos reservados.</small>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function abrirPerfil() {
+      const id = document.getElementById('profId').value.trim();
+      if (!id) { 
+        showAlert('Por favor, informe o ID do profissional.', 'warning');
+        return; 
+      }
+      
+      // Validação básica de UUID
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(id)) {
+        showAlert('Por favor, insira um ID válido no formato UUID.', 'warning');
+        return;
+      }
+      
+      window.location.href = '/profissional/perfil-publico?id=' + encodeURIComponent(id);
+    }
+
+    function scrollToProfissionais() {
+      document.getElementById('profissionaisSection').scrollIntoView({ 
+        behavior: 'smooth' 
+      });
+      document.getElementById('filtroProfissao').focus();
+    }
+
+    function showAlert(message, type) {
+      // Remove alertas existentes
+      const existingAlert = document.querySelector('.alert');
+      if (existingAlert) {
+        existingAlert.remove();
+      }
+
+      // Cria novo alerta
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show mt-3`;
+      alertDiv.innerHTML = `
+        <i class="bi bi-${type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      
+      document.getElementById('searchSection').parentNode.insertBefore(alertDiv, document.getElementById('searchSection'));
+    }
+
+    async function carregarProfissionais() {
+      const listaDiv = document.getElementById('listaProfissionais');
+      const vazio = document.getElementById('semProfissionais');
+      const contador = document.getElementById('contadorProfissionais');
+      const prof = document.getElementById('filtroProfissao').value.trim();
+      const cid = document.getElementById('filtroCidade').value.trim();
+
+      let url = '/api/profissionais';
+      const params = [];
+      if (prof) params.push('profissao=' + encodeURIComponent(prof));
+      if (cid) params.push('cidade=' + encodeURIComponent(cid));
+      if (params.length) url += '?' + params.join('&');
+
+      listaDiv.innerHTML = `
+        <div class="col-12 text-center py-5">
+          <div class="loading-spinner spinner-border text-primary"></div>
+          <p class="mt-3 text-muted">Carregando profissionais...</p>
+        </div>
+      `;
+      vazio.classList.add('d-none');
+      contador.textContent = 'Carregando...';
+
+      try {
+        // Simulação de delay para demonstração
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error('Falha ao carregar');
+        const dados = await resp.json();
+
+        if (!Array.isArray(dados) || dados.length === 0) {
+          listaDiv.innerHTML = '';
+          vazio.classList.remove('d-none');
+          contador.textContent = '0 profissionais';
+          return;
+        }
+
+        contador.textContent = `${dados.length} profissional${dados.length === 1 ? '' : 'es'}`;
+
+        // Monta cards
+        listaDiv.innerHTML = dados.map(d => {
+          const iniciais = (d.nome || 'P').split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
+          const localizacao = [d.cidade, d.estado].filter(Boolean).join('/') || 'Local não informado';
+          const descricao = d.descricao || 'Profissional qualificado e comprometido com a excelência do serviço.';
+          const descricaoTruncada = descricao.length > 100 ? descricao.substring(0, 97) + '...' : descricao;
+          
+          return `
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="professional-card card h-100 shadow-sm border-0">
+                <div class="card-body d-flex flex-column p-4">
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="avatar-placeholder rounded-circle me-3" 
+                         style="width: 60px; height: 60px; font-size: 1.25rem;">
+                      ${iniciais}
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1 fw-bold text-truncate" title="${d.nome || ''}">${d.nome || 'Nome não informado'}</h6>
+                      <div class="small text-muted text-truncate" title="${d.profissao || ''}">
+                        <i class="bi bi-briefcase me-1"></i>${d.profissao || 'Profissão não informada'}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <p class="small text-muted flex-grow-1 mb-3" style="min-height: 60px;">
+                    ${descricaoTruncada}
+                  </p>
+                  
+                  <div class="d-flex justify-content-between align-items-center mt-auto">
+                    <span class="badge bg-light text-dark small">
+                      <i class="bi bi-geo-alt me-1"></i>${localizacao}
+                    </span>
+                    <a class="btn btn-sm btn-primary px-3" href="/profissional/perfil-publico?id=${d.id}">
+                      <i class="bi bi-eye me-1"></i>Ver Perfil
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+      } catch (e) {
+        console.error('Erro ao carregar profissionais:', e);
+        listaDiv.innerHTML = `
+          <div class="col-12 text-center py-5">
+            <i class="bi bi-exclamation-triangle text-danger display-4 mb-3"></i>
+            <h5 class="text-danger">Erro ao carregar profissionais</h5>
+            <p class="text-muted">Tente recarregar a página ou verificar sua conexão.</p>
+            <button class="btn btn-primary" onclick="carregarProfissionais()">
+              <i class="bi bi-arrow-clockwise me-1"></i>Tentar Novamente
+            </button>
+          </div>
+        `;
+        contador.textContent = 'Erro';
+      }
+    }
+
+    function resetFiltros() {
+      document.getElementById('filtroProfissao').value = '';
+      document.getElementById('filtroCidade').value = '';
+      carregarProfissionais();
+    }
+
+    // Foco no input quando a página carregar
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('profId').focus();
+      carregarProfissionais();
+    });
+  </script>
+
+  <!-- Bootstrap JS 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> -->

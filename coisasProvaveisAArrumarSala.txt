@@ -1,0 +1,12 @@
+O que editar (apenas application.properties)
+
+No Gestor (application.properties) ajuste as linhas:
+servicos.sd1.base-url=http://<PC_que_rodará_SD1>:8082
+servicos.sd1replica.base-url=http://<PC_que_rodará_SD1Replica>:8085
+servicos.sd2.base-url=http://<PC_que_rodará_SD2>:8083
+servicos.sd3.base-url=http://<PC_que_rodará_SD3>:8084
+uploads.dir= (defina o caminho no PC que vai armazenar arquivos, se necessário)
+Nos serviços SD1/SD1Replica/SD2/SD3 (cada application.properties):
+Verifique/defina server.port=<porta> conforme o mapeamento acima.
+Ajuste spring.datasource.url=jdbc:postgresql://<DB_IP>:5432/<nome_db> para o IP da máquina que roda o Postgres (pode ser um dos 3 PCs).
+Se usar uploads locais, ajuste uploads.dir localmente (ou deixe o Gestor servir uploads).
