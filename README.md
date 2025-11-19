@@ -1,93 +1,200 @@
 # 🚀 PatroServiçosSD
 
-![Java](https://img.shields.io/badge/Java-17-blue) ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-✅-6DB33F) ![Python](https://img.shields.io/badge/Python-3.10-yellow) ![MongoDB](https://img.shields.io/badge/MongoDB-✓-47A248) ![License MIT](https://img.shields.io/badge/License-MIT-lightgrey)
+<div align="center">
 
-Uma implementação didática para a disciplina de Sistemas Distribuídos — monorepo com micro-serviços que demonstram separação de responsabilidades, orquestração, balanceamento (round‑robin) e tolerância a falhas.
+![Java](https://img.shields.io/badge/Java-17-007396?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-5.0-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
----
+**Uma implementação didática para a disciplina de Sistemas Distribuídos**
 
-## 📌 Índice
-- [Sobre](#-sobre)  
-- [Visão rápida](#-visão-rápida)  
-- [Arquitetura](#-arquitetura)  
-- [Estrutura do repositório](#-estrutura-do-repositório)  
-- [Tecnologias](#-tecnologias)  
-- [Como executar (modo rápido)](#-como-executar-modo-rápido)  
-- [Endpoints principais](#-endpoints-principais)  
-- [Demonstração: balanceamento e tolerância](#-demonstração-balanceamento-e-tolerância)  
-- [Decisões simplificadoras](#-decisões-simplificadoras)  
-- [Contribuição](#-contribuição)  
-- [Licença](#-licença)  
-- [Autor](#-autor)
+Monorepo com micro-serviços demonstrando separação de responsabilidades, orquestração, balanceamento (round‑robin) e tolerância a falhas.
+
+[![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-VSCode-007ACC?style=for-the-badge&logo=visualstudiocode)](https://open.vscode.dev/your-repo)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=for-the-badge)](CONTRIBUTING.md)
+
+</div>
 
 ---
 
-## 📝 Sobre
-PatroServiçosSD é um projeto de exemplo que simula um sistema de prestação de serviços com três backends separados e um Gestor que atua como gateway/orquestrador. O objetivo é demonstrar conceitos de sistemas distribuídos (multisserviços, balanceamento, tolerância a falhas e orquestração entre serviços).
+## 📋 Índice Rápido
+
+- [🎯 Sobre o Projeto](#-sobre-o-projeto)
+- [⚡ Visão Rápida](#-visão-rápida)
+- [🏗️ Arquitetura](#️-arquitetura)
+- [📁 Estrutura do Projeto](#-estrutura-do-projeto)
+- [🛠️ Stack Tecnológica](#️-stack-tecnológica)
+- [🚀 Como Executar](#-como-executar)
+- [🔌 API Endpoints](#-api-endpoints)
+- [⚖️ Balanceamento & Tolerância](#️-balanceamento--tolerância)
+- [💡 Decisões de Projeto](#-decisões-de-projeto)
+- [🤝 Contribuindo](#-contribuindo)
+- [📄 Licença](#-licença)
+- [👨💻 Autor](#-autor)
 
 ---
 
-## ⚡ Visão rápida
-- Front (HTML/CSS/JS) servido pelo **Gestor**.
-- Gestor: gateway + balanceador + orquestrador (sem banco).
-- Serviço 1: dados do domínio (Profissionais, Clientes, Documentos, Perfil) — Postgres/H2.
-- Serviço 2: autenticação (logins/credenciais) — Postgres/H2.
-- Serviço 3: interações (chat, feedback) — MongoDB/FastAPI.
+## 🎯 Sobre o Projeto
+
+<div align="center">
+
+*PatroServiçosSD simula um sistema de prestação de serviços com arquitetura distribuída, implementando conceitos fundamentais de sistemas distribuídos em ambiente acadêmico.*
+
+</div>
+
+**Objetivos Principais:**
+- ✅ Demonstrar **separação de responsabilidades** entre serviços
+- ✅ Implementar **balanceamento de carga** (round-robin)
+- ✅ Garantir **tolerância a falhas**
+- ✅ Praticar **orquestração entre serviços**
+- ✅ Utilizar **bancos de dados heterogêneos**
 
 ---
 
-## 🏗️ Arquitetura (resumo)
+## ⚡ Visão Rápida
+
+| Componente   | Tecnologia   | Função Principal                                |
+|--------------|--------------|-------------------------------------------------|
+| **Gestor**   | Spring Boot  | Gateway + Frontend + Balanceador                |
+| **Serviço 1**| Spring Boot  | Domínio (Profissionais, Clientes)               |
+| **Serviço 2**| Spring Boot  | Autenticação & Autorização                      |
+| **Serviço 3**| FastAPI      | Chat & Feedbacks                                |
+
+**Bancos de Dados:**
+- 🗄️ **Serviço 1 & 2**: PostgreSQL / H2 (dev)
+- 🍃 **Serviço 3**: MongoDB
+
+---
+
+## 🏗️ Arquitetura
+
 ```mermaid
-flowchart LR
-  Browser -->|HTTP| Gestor[Gestor (Spring Boot) - Front + Proxy]
-  Gestor -->|round-robin| S1[Serviço 1 (Spring) - Profissionais/Clientes]
-  Gestor --> S2[Serviço 2 (Spring) - Auth]
-  Gestor --> S3[Serviço 3 (FastAPI) - Chat/Feedback]
-  S1 --> DB1[(Postgres/H2)]
-  S2 --> DB2[(Postgres/H2)]
-  S3 --> DB3[(MongoDB)]
+graph TB
+    subgraph "Client Layer"
+        Browser[🌐 Browser]
+    end
+    
+    subgraph "Gateway Layer"
+        Gestor[🚀 Gestor<br/>Spring Boot<br/>Porta: 3000]
+    end
+    
+    subgraph "Service Layer"
+        S1_1[🔧 Serviço 1<br/>Instância 1<br/>:8081]
+        S1_2[🔧 Serviço 1<br/>Instância 2<br/>:8082]
+        S2[🔐 Serviço 2<br/>Autenticação<br/>:8090]
+        S3[💬 Serviço 3<br/>FastAPI<br/>:8000]
+    end
+    
+    subgraph "Data Layer"
+        DB1[(📊 PostgreSQL<br/>Domínio)]
+        DB2[(🔑 PostgreSQL<br/>Auth)]
+        DB3[(🍃 MongoDB<br/>Chat/Feedback)]
+    end
+    
+    Browser --> Gestor
+    Gestor --> S1_1
+    Gestor --> S1_2
+    Gestor --> S2
+    Gestor --> S3
+    S1_1 --> DB1
+    S1_2 --> DB1
+    S2 --> DB2
+    S3 --> DB3
 ```
-> Observação: IDs entre serviços são UUIDs lógicos — não há FK física entre bancos.
 
 ---
 
-## 📁 Estrutura sugerida do repositório
+## 📁 Estrutura do Projeto
+
 ```
-/
-├─ gestor-spring/        # Gateway + front (templates / static)
-├─ servico1-spring/      # Profissionais, Clientes, Documentos, Perfil
-├─ servico2-spring/      # Autenticação (usuarios_clientes, usuarios_trabalhadores)
-├─ servico3-python/      # Chat e feedbacks (FastAPI + Mongo)
-└─ README.md
+PatroServiçosSD/
+│
+├── gestor-spring/                 # 🚀 Gateway & Frontend
+│   ├── src/main/resources/templates/ # 🎨 Páginas HTML
+│   ├── src/main/resources/static/    # 🎭 CSS/JS/Assets
+│   └── application.properties        # ⚙️ Configurações
+│
+├── servico1-spring/               # 🔧 Domínio Principal
+│   ├── src/main/java/com/domain/   # 💼 Lógica de Negócio
+│   │   ├── controller/             # 🎮 Controladores REST
+│   │   ├── service/                # ⚡ Serviços
+│   │   └── model/                  # 🏛️ Entidades
+│   └── application.properties      # ⚙️ Config DB Domínio
+│
+├── servico2-spring/               # 🔐 Autenticação
+│   ├── src/main/java/com/auth/     # 🔑 Lógica de Auth
+│   │   ├── controller/             # 🎮 Endpoints Auth
+│   │   └── service/                # ⚡ Serviços Auth
+│   └── application.properties      # ⚙️ Config DB Auth
+│
+├── servico3-python/               # 💬 Chat & Feedback
+│   ├── app/                        # 🐍 Código Python
+│   │   ├── main.py                 # 🚀 Aplicação FastAPI
+│   │   └── models/                 # 🏛️ Modelos MongoDB
+│   └── requirements.txt            # 📦 Dependências Python
+│
+└── README.md                      # 📚 Documentação
 ```
 
 ---
 
-## 🛠️ Tecnologias
-- Backend: Java 17, Spring Boot (Serviço 1, Serviço 2, Gestor)
-- Backend (S3): Python 3.10, FastAPI
-- DBs: H2 (dev), Postgres (prod), MongoDB (serviço 3)
-- Front: HTML/CSS/JS (Bootstrap 5), estático servido pelo Gestor
-- Build: Maven
+## 🛠️ Stack Tecnológica
+
+### Backend
+| Tecnologia   | Versão   | Uso                             |
+|--------------|----------|---------------------------------|
+| Java         | 17       | Serviços 1, 2 e Gestor          |
+| Spring Boot  | 3.1+     | Framework principal             |
+| Python       | 3.10+    | Serviço 3 (Chat)                |
+| FastAPI      | 0.100+   | Framework Python                |
+
+### Bancos de Dados
+| Banco       | Tipo      | Serviço                        |
+|-------------|-----------|--------------------------------|
+| PostgreSQL  | Relacional| Serviços 1 e 2                 |
+| MongoDB     | NoSQL     | Serviço 3                      |
+| H2          | In-memory | Desenvolvimento / testes       |
+
+### Frontend
+- HTML5 / CSS3 / JS
+- Bootstrap 5
+- Arquivos estáticos servidos pelo Gestor
 
 ---
 
-## ▶️ Como executar (modo rápido, sem Docker)
-Pré-requisitos: Java 17+, Maven, Python 3.10+ (opcional, para S3).
+## 🚀 Como Executar
 
-1. Serviço 1 — instância 1 (porta 8081)
+### Pré-requisitos
+- ☕ Java 17+
+- 🐍 Python 3.10+ (para Serviço 3)
+- 🗄️ Maven 3.6+
+- 🍃 MongoDB (opcional para dev)
+- 🐘 PostgreSQL (opcional para dev)
+
+### Execução Rápida (sem Docker)
+
+```bash
+# 1️⃣ Clone o repositório
+git clone https://github.com/seu-usuario/PatroServicosSD.git
+cd PatroServicosSD
+```
+
+1. Serviço 1 — Instância 1 (porta 8081)
 ```bash
 cd servico1-spring
-mvn spring-boot:run -Dspring-boot.run.arguments="--PORT=8081"
+mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8081 --INSTANCE_ID=svc1-8081"
 ```
 
-2. Serviço 1 — instância 2 (porta 8082)
+2. Serviço 1 — Instância 2 (porta 8082) — nova aba/terminal
 ```bash
 cd servico1-spring
-mvn spring-boot:run -Dspring-boot.run.arguments="--PORT=8082 --INSTANCE_ID=svc1-8082"
+mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8082 --INSTANCE_ID=svc1-8082"
 ```
 
-3. Serviço 2 — autenticação (porta 8090)
+3. Serviço 2 — Autenticação (porta 8090)
 ```bash
 cd servico2-spring
 mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8090"
@@ -97,87 +204,183 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8090"
 ```bash
 cd servico3-python
 python -m venv venv
-# ativar venv...
+# Linux/Mac:
+source venv/bin/activate
+# Windows:
+# venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-5. Gestor — front + proxy (porta 3000)
+5. Gestor — Gateway + Frontend (porta 3000)
 ```bash
 cd gestor-spring
 mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=3000"
 ```
 
-Abra o front: http://localhost:3000
+**Acesso**
+- Frontend: http://localhost:3000  
+- API Gestor: http://localhost:3000/api  
+- Serviço 3 (docs): http://localhost:8000/docs
 
 ---
 
-## 🔌 Endpoints principais (resumo)
-Obs: o browser/JS deve conversar apenas com o Gestor (ex.: `http://localhost:3000/api/...`).
+## 🔌 API Endpoints
 
-- Gestor (gateway)
-  - GET  /api/profissionais                      → lista (balanceado S1)
-  - GET  /api/profissionais/{id}                → details (S1)
-  - POST /api/cadastro-profissional-completo    → orquestra S1 + S2
-  - POST /api/auth/cliente/register/login       → proxy → S2
-  - POST /api/auth/profissional/register/login  → proxy → S2
-  - GET/POST /api/chats                         → proxy → S3
-  - GET/POST /api/feedbacks                     → proxy → S3
+> Obs: o browser/JS deve conversar apenas com o Gestor (ex.: `http://localhost:3000/api/...`).
 
-- Serviço 1 (exemplo)
-  - GET  /api/v1/profissionais
-  - POST /api/v1/profissionais
-  - GET  /actuator/health
+### 🚀 Gestor (Gateway - Porta 3000)
+| Método | Endpoint                                  | Descrição                        | Serviço Destino |
+|--------|-------------------------------------------|----------------------------------|-----------------|
+| GET    | /api/profissionais                        | Lista profissionais              | Serviço 1       |
+| GET    | /api/profissionais/{id}                   | Detalhes profissional            | Serviço 1       |
+| POST   | /api/cadastro-profissional-completo       | Cadastro completo (S1 + S2)      | S1 + S2         |
+| POST   | /api/auth/cliente/register                | Registro cliente                 | Serviço 2       |
+| POST   | /api/auth/cliente/login                   | Login cliente                    | Serviço 2       |
+| GET/POST | /api/chats                              | Chat                             | Serviço 3       |
+| GET/POST | /api/feedbacks                          | Feedbacks                        | Serviço 3       |
 
-- Serviço 2 (exemplo)
-  - POST /api/v1/auth/cliente/register
-  - POST /api/v1/auth/cliente/login
-  - GET  /api/v1/auth/validate
-
-- Serviço 3 (exemplo)
-  - POST /api/v1/chats
-  - POST /api/v1/feedbacks
-
----
-
-## 🎯 Demonstração: balanceamento & tolerância (roteiro curto)
-1. Suba as duas instâncias do Serviço 1 e o Gestor.
-2. Chame repetidamente:
+### 🔧 Serviço 1 (Domínio)
 ```bash
-curl -i http://localhost:3000/api/profissionais
+# Health Check
+curl http://localhost:8081/actuator/health
+
+# Listar profissionais
+curl http://localhost:8081/api/v1/profissionais
 ```
-3. Observe no cabeçalho de resposta o `X-Instance-Id` alternando entre `svc1-8081` e `svc1-8082`.
-4. Pare uma instância (Ctrl+C). O Gestor deve detectar erro (timeout) e usar a outra instância.
-5. Reinicie a instância; o health-check reabilita ela.
+
+### 🔐 Serviço 2 (Autenticação)
+```bash
+# Registrar cliente
+curl -X POST http://localhost:8090/api/v1/auth/cliente/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"cliente@teste.com","senha":"123456"}'
+```
+
+### 💬 Serviço 3 (Chat)
+```bash
+# Criar chat
+curl -X POST http://localhost:8000/api/v1/chats \
+  -H "Content-Type: application/json" \
+  -d '{"usuario_id":"123","mensagem":"Olá!"}'
+```
 
 ---
 
-## 💡 Decisões simplificadoras (para entrega rápida)
-- Formulário do profissional único: coleta perfil + login/senha → Gestor orquestra S1 + S2.
-- Token simples em memória (UUID) no S2 para validação (em vez de JWT).
-- Uploads e documentos podem ser Strings/paths (simplifica armazenamento).
-- Front servido pelo Gestor (evita chamadas diretas ao S1/S2/S3).
+## ⚖️ Balanceamento & Tolerância
+
+### 🎯 Demonstração Prática (round-robin)
+```bash
+for i in {1..6}; do
+  curl -i http://localhost:3000/api/profissionais | grep "X-Instance-Id"
+done
+```
+
+Saída esperada (alternando entre instâncias):
+```
+X-Instance-Id: svc1-8081
+X-Instance-Id: svc1-8082
+X-Instance-Id: svc1-8081
+X-Instance-Id: svc1-8082
+```
+
+### 🔧 Tolerância a Falhas
+- Pare uma instância do Serviço 1 (Ctrl+C).
+- Continue fazendo requests para o Gestor — ele deve usar a instância saudável.
+- Health-check periódicos reabilitam instâncias quando voltam.
 
 ---
 
-## 🤝 Contribuição
-- Issues são bem-vindas para bugs e melhorias.
-- Para pequenas correções, abra um PR com testes simples e descrição clara do que foi alterado.
+## 💡 Decisões de Projeto
+
+### 🎯 Simplificações para Entrega Rápida
+| Área         | Decisão                        | Justificativa                        |
+|--------------|--------------------------------|--------------------------------------|
+| Autenticação | Token UUID em memória          | Simplicidade vs implementar JWT      |
+| Formulários  | Único para profissional        | Menos telas; orquestração S1 + S2    |
+| Uploads      | Strings/paths                  | Evita complexidade de armazenamento  |
+| Frontend     | Servido pelo Gestor            | Evita CORS e simplifica deploy       |
+
+### 🔄 Orquestração de Cadastro (fluxo)
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant G as Gestor
+    participant S1 as Serviço 1
+    participant S2 as Serviço 2
+    
+    C->>G: POST /cadastro-profissional
+    G->>S1: POST /profissionais (dados perfil)
+    S1-->>G: ID_Profissional
+    G->>S2: POST /auth/profissional/register
+    S2-->>G: Token
+    G-->>C: Sucesso + Token
+```
 
 ---
 
-## 🧾 Licença
-MIT — veja o arquivo LICENSE para detalhes.
+## 🤝 Contribuindo
+
+<div align="center">
+Contribuições são bem-vindas! 🎉
+</div>
+
+### 📋 Como Contribuir
+1. Fork o projeto
+2. Crie uma branch:
+```bash
+git checkout -b feature/nova-funcionalidade
+```
+3. Commit suas mudanças:
+```bash
+git commit -m "feat: adiciona nova funcionalidade"
+```
+4. Push:
+```bash
+git push origin feature/nova-funcionalidade
+```
+5. Abra um Pull Request
+
+### 🐛 Reportando Issues
+- Use o template de issue (se disponível)
+- Inclua passos para reproduzir e logs relevantes
 
 ---
 
-## 👤 Autor
-PabloVLS — criado para fins acadêmicos / avaliação.
+## 📄 Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo LICENSE para detalhes.
+
+```
+MIT License
+
+Copyright (c) 2025 PabloVLS
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions: ...
+```
 
 ---
 
-Se quiser, eu posso:
-- adicionar badges dinâmicos (build, coverage) — se você ligar CI;
-- gerar uma versão em inglês;
-- ou atualizar o README com exemplos concretos de payloads/curl para cada endpoint.
-Me diz qual das opções prefere que eu faça em seguida.  
+## 👨💻 Autor
+
+<div align="center">
+**PabloVLS**  
+Criado para fins acadêmicos / avaliação
+
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github)](https://github.com/PabloVLS)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/)
+
+</div>
+
+<div align="center">
+⭐ Gostou do projeto? Deixe uma estrela no repositório!  
+"A simplicidade é o último grau de sofisticação" — Leonardo da Vinci
+</div>
+
+📅 Última atualização: Janeiro 2024  
+🐛 Encontrou um bug? Abra uma issue
