@@ -1,125 +1,183 @@
-# PatroServiçosSD
+# 🚀 PatroServiçosSD
 
-Projeto para a disciplina de Sistemas Distribuídos — prova/trabalho prático.  
-Monorepo com micro-serviços mínimos para demonstrar: separação de responsabilidades, balanceamento (round‑robin), tolerância a falhas e comunicação entre serviços.
+![Java](https://img.shields.io/badge/Java-17-blue) ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-✅-6DB33F) ![Python](https://img.shields.io/badge/Python-3.10-yellow) ![MongoDB](https://img.shields.io/badge/MongoDB-✓-47A248) ![License MIT](https://img.shields.io/badge/License-MIT-lightgrey)
 
-Resumo rápido
-- Objetivo: app simples com profissionais, clientes, login, chat e feedbacks. Demonstra balanceamento entre duas instâncias do Serviço 1.
-- Arquitetura: Gestor (gateway) → Serviços (Serviço 1, Serviço 2, Serviço 3)
-- Linguagens / Stack:
-  - Java + Spring Boot (Serviço 1, Serviço 2, Gestor)
-  - Python + FastAPI (Serviço 3)
-  - H2 (desenvolvimento rápido) / Postgres (opcional para produção)
-  - MongoDB (serviço 3, opcional para demo local; pode começar sem)
-- Front-end: HTML/CSS/JS servidos pelo Gestor (static/ ou templates/).
+Uma implementação didática para a disciplina de Sistemas Distribuídos — monorepo com micro-serviços que demonstram separação de responsabilidades, orquestração, balanceamento (round‑robin) e tolerância a falhas.
 
-Estrutura sugerida (monorepo)
-- servico1-spring/      — profissionais, documentos, perfil_profissional, clientes (Postgres/H2)
-- servico2-spring/      — autenticação (usuarios_clientes, usuarios_trabalhadores)
-- servico3-python/      — chat e feedbacks (MongoDB)
-- gestor-spring/        — gateway / orquestrador / serve HTML/CSS/JS
-- client/ (opcional)    — páginas estáticas se preferir manter fora do Gestor
+---
 
-O que cada componente faz
-- Serviço 1: dados de domínio (profissionais, clientes, documentos, perfil), expõe REST e /actuator/health.
-- Serviço 2: autenticação (registro/login), emite token simples (para prova pode ser token em memória) e valida token.
-- Serviço 3: chat e feedback (coleções Mongo), rotas básicas.
-- Gestor: serve as páginas estáticas, faz proxy/orquestração, balanceia chamadas para Serviço 1 (round-robin), executa health-check das instâncias e encaminha chamadas para S2/S3.
+## 📌 Índice
+- [Sobre](#-sobre)  
+- [Visão rápida](#-visão-rápida)  
+- [Arquitetura](#-arquitetura)  
+- [Estrutura do repositório](#-estrutura-do-repositório)  
+- [Tecnologias](#-tecnologias)  
+- [Como executar (modo rápido)](#-como-executar-modo-rápido)  
+- [Endpoints principais](#-endpoints-principais)  
+- [Demonstração: balanceamento e tolerância](#-demonstração-balanceamento-e-tolerância)  
+- [Decisões simplificadoras](#-decisões-simplificadoras)  
+- [Contribuição](#-contribuição)  
+- [Licença](#-licença)  
+- [Autor](#-autor)
 
-Como rodar (modo rápido, sem Docker)
-1. Preparação (Java)
-- Java 17+ instalado
-- Maven instalado
+---
 
-2. Rodar Serviço 1 (duas instâncias)
-- Terminal 1:
-  - cd servico1-spring
-  - mvn spring-boot:run
-  - (ou) mvn spring-boot:run -Dspring-boot.run.arguments="--PORT=8081"
-- Terminal 2 (segunda instância na porta 8082):
-  - cd servico1-spring
-  - mvn spring-boot:run -Dspring-boot.run.arguments="--PORT=8082 --INSTANCE_ID=svc1-8082"
+## 📝 Sobre
+PatroServiçosSD é um projeto de exemplo que simula um sistema de prestação de serviços com três backends separados e um Gestor que atua como gateway/orquestrador. O objetivo é demonstrar conceitos de sistemas distribuídos (multisserviços, balanceamento, tolerância a falhas e orquestração entre serviços).
 
-3. Rodar Serviço 2 (auth)
-- cd servico2-spring
-- mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8090"
+---
 
-4. Rodar Serviço 3 (FastAPI)
-- cd servico3-python
-- python -m venv venv
-- Windows: venv\Scripts\activate  Linux/Mac: source venv/bin/activate
-- pip install -r requirements.txt
-- uvicorn app.main:app --reload --port 8000
+## ⚡ Visão rápida
+- Front (HTML/CSS/JS) servido pelo **Gestor**.
+- Gestor: gateway + balanceador + orquestrador (sem banco).
+- Serviço 1: dados do domínio (Profissionais, Clientes, Documentos, Perfil) — Postgres/H2.
+- Serviço 2: autenticação (logins/credenciais) — Postgres/H2.
+- Serviço 3: interações (chat, feedback) — MongoDB/FastAPI.
 
-5. Rodar Gestor (serve front + proxy)
-- cd gestor-spring
-- mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=3000"
+---
 
-Observações sobre bancos
-- Para desenvolvimento o projeto usa H2 (in-memory) por facilidade. Se quiser Postgres:
-  - injetar URL: `--spring.datasource.url=jdbc:postgresql://localhost:5432/servico1` e setar user/password.
-- Serviço 3 pode usar MongoDB; para demo você pode manter um armazenamento simples em memória, se preferir (menos dependências).
+## 🏗️ Arquitetura (resumo)
+```mermaid
+flowchart LR
+  Browser -->|HTTP| Gestor[Gestor (Spring Boot) - Front + Proxy]
+  Gestor -->|round-robin| S1[Serviço 1 (Spring) - Profissionais/Clientes]
+  Gestor --> S2[Serviço 2 (Spring) - Auth]
+  Gestor --> S3[Serviço 3 (FastAPI) - Chat/Feedback]
+  S1 --> DB1[(Postgres/H2)]
+  S2 --> DB2[(Postgres/H2)]
+  S3 --> DB3[(MongoDB)]
+```
+> Observação: IDs entre serviços são UUIDs lógicos — não há FK física entre bancos.
 
-Principais endpoints (resumo)
-- Gestor (ponto único que o front chama)
-  - GET  /api/profissionais              → balanceia entre instâncias do Serviço 1
-  - GET  /api/profissionais/{id}        → S1
-  - POST /api/cadastro-profissional-completo → orquestra S1 (dados) + S2 (credencial)
-  - POST /api/auth/cliente/register     → proxy → S2
-  - POST /api/auth/cliente/login        → proxy → S2
-  - POST /api/auth/profissional/register/login → proxy → S2
-  - GET/POST /api/chats                 → proxy → S3
-  - GET/POST /api/feedbacks             → proxy → S3
+---
 
-- Serviço 1 (exemplos)
+## 📁 Estrutura sugerida do repositório
+```
+/
+├─ gestor-spring/        # Gateway + front (templates / static)
+├─ servico1-spring/      # Profissionais, Clientes, Documentos, Perfil
+├─ servico2-spring/      # Autenticação (usuarios_clientes, usuarios_trabalhadores)
+├─ servico3-python/      # Chat e feedbacks (FastAPI + Mongo)
+└─ README.md
+```
+
+---
+
+## 🛠️ Tecnologias
+- Backend: Java 17, Spring Boot (Serviço 1, Serviço 2, Gestor)
+- Backend (S3): Python 3.10, FastAPI
+- DBs: H2 (dev), Postgres (prod), MongoDB (serviço 3)
+- Front: HTML/CSS/JS (Bootstrap 5), estático servido pelo Gestor
+- Build: Maven
+
+---
+
+## ▶️ Como executar (modo rápido, sem Docker)
+Pré-requisitos: Java 17+, Maven, Python 3.10+ (opcional, para S3).
+
+1. Serviço 1 — instância 1 (porta 8081)
+```bash
+cd servico1-spring
+mvn spring-boot:run -Dspring-boot.run.arguments="--PORT=8081"
+```
+
+2. Serviço 1 — instância 2 (porta 8082)
+```bash
+cd servico1-spring
+mvn spring-boot:run -Dspring-boot.run.arguments="--PORT=8082 --INSTANCE_ID=svc1-8082"
+```
+
+3. Serviço 2 — autenticação (porta 8090)
+```bash
+cd servico2-spring
+mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8090"
+```
+
+4. Serviço 3 — FastAPI (porta 8000)
+```bash
+cd servico3-python
+python -m venv venv
+# ativar venv...
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+
+5. Gestor — front + proxy (porta 3000)
+```bash
+cd gestor-spring
+mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=3000"
+```
+
+Abra o front: http://localhost:3000
+
+---
+
+## 🔌 Endpoints principais (resumo)
+Obs: o browser/JS deve conversar apenas com o Gestor (ex.: `http://localhost:3000/api/...`).
+
+- Gestor (gateway)
+  - GET  /api/profissionais                      → lista (balanceado S1)
+  - GET  /api/profissionais/{id}                → details (S1)
+  - POST /api/cadastro-profissional-completo    → orquestra S1 + S2
+  - POST /api/auth/cliente/register/login       → proxy → S2
+  - POST /api/auth/profissional/register/login  → proxy → S2
+  - GET/POST /api/chats                         → proxy → S3
+  - GET/POST /api/feedbacks                     → proxy → S3
+
+- Serviço 1 (exemplo)
   - GET  /api/v1/profissionais
   - POST /api/v1/profissionais
   - GET  /actuator/health
 
-- Serviço 2 (exemplos)
+- Serviço 2 (exemplo)
   - POST /api/v1/auth/cliente/register
   - POST /api/v1/auth/cliente/login
   - GET  /api/v1/auth/validate
 
-- Serviço 3 (exemplos)
+- Serviço 3 (exemplo)
   - POST /api/v1/chats
   - POST /api/v1/feedbacks
 
-Como demonstrar balanceamento e tolerância a falhas (para a apresentação)
-1. Com tudo rodando, abra o front (p. ex. http://localhost:3000/cadastro-profissional.html ou /index.html).
-2. No console do navegador faça fetch('/api/profissionais') repetidas vezes; observe no response header `X-Instance-Id` alternando entre svc1-8081 e svc1-8082.
-3. Pare uma instância do Serviço 1 (Ctrl+C). Chame novamente `/api/profissionais` — Gestor deve pular a instância caída e responder usando a outra.
-4. Reinicie a instância parada; Gestor (com health-check) deve recolocá-la na lista.
+---
 
-Decisões simplificadoras (para terminar rápido)
-- Unificar o formulário de cadastro do profissional: coleta perfil + login/senha e Gestor orquestra S1 + S2.
-- Token simples em memória no Serviço 2 (UUID) em vez de JWT.
-- Documentos/fotos como campos de texto ou upload simples (opcional).
-- Front estático servido pelo Gestor (pasta `static/`), sem SSR necessário.
-- Validations básicas só (não implemente recuperação de senha).
-
-Dicas e boas práticas (para a entrega)
-- Não exponha diretamente portas de S1/S2/S3 ao front — o front deve falar apenas com o Gestor.
-- Mantenha logs simples no Gestor indicando qual instância foi usada (útil para demo).
-- Seed no Serviço 1 para já ter 2 profissionais ao iniciar (facilita demonstração).
-- Teste o fluxo completo antes da apresentação (registro → login → chat/feedback).
-
-Arquivo de configuração importante
-- Mantenha no Gestor um arquivo com as URLs das instâncias do Serviço 1:
-  - ex.: `servico1.instances = http://localhost:8081,http://localhost:8082`
-  - e as bases do S2 e S3: `servico2.base = http://localhost:8090`, `servico3.base = http://localhost:8000`
-
-Contato / Autor
-- Autor: PabloVLS (aluno)
-- Projeto feito para fins de avaliação escolar — código simples e didático.
-
-Licença
-- MIT (ou outra licença conforme sua preferência).
+## 🎯 Demonstração: balanceamento & tolerância (roteiro curto)
+1. Suba as duas instâncias do Serviço 1 e o Gestor.
+2. Chame repetidamente:
+```bash
+curl -i http://localhost:3000/api/profissionais
+```
+3. Observe no cabeçalho de resposta o `X-Instance-Id` alternando entre `svc1-8081` e `svc1-8082`.
+4. Pare uma instância (Ctrl+C). O Gestor deve detectar erro (timeout) e usar a outra instância.
+5. Reinicie a instância; o health-check reabilita ela.
 
 ---
 
-Se quiser, eu já gero para você:
-- README pronto num arquivo `README.md` (este texto).
-- Lista enxuta de endpoints com exemplos de payloads.
-- Esqueleto do endpoint orquestrador no Gestor (sem implementação completa) para você colar no projeto.
-Diz o que prefere que eu faça em seguida.
+## 💡 Decisões simplificadoras (para entrega rápida)
+- Formulário do profissional único: coleta perfil + login/senha → Gestor orquestra S1 + S2.
+- Token simples em memória (UUID) no S2 para validação (em vez de JWT).
+- Uploads e documentos podem ser Strings/paths (simplifica armazenamento).
+- Front servido pelo Gestor (evita chamadas diretas ao S1/S2/S3).
+
+---
+
+## 🤝 Contribuição
+- Issues são bem-vindas para bugs e melhorias.
+- Para pequenas correções, abra um PR com testes simples e descrição clara do que foi alterado.
+
+---
+
+## 🧾 Licença
+MIT — veja o arquivo LICENSE para detalhes.
+
+---
+
+## 👤 Autor
+PabloVLS — criado para fins acadêmicos / avaliação.
+
+---
+
+Se quiser, eu posso:
+- adicionar badges dinâmicos (build, coverage) — se você ligar CI;
+- gerar uma versão em inglês;
+- ou atualizar o README com exemplos concretos de payloads/curl para cada endpoint.
+Me diz qual das opções prefere que eu faça em seguida.  
